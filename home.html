@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AutomateMyPC.AI - PC Tool</title>
+<meta name="description" content="AutomateMyPC.AI automates your Windows PC using plain-English instructions. No coding needed. Free AI automation tool for Windows 10 & 11 - download today.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ─── CLAUDE.AI DARK THEME TOKENS ─── */
+:root {
+  --bg-base:       #1a1a1a;
+  --bg-surface:    #212121;
+  --bg-elevated:   #2a2a2a;
+  --bg-hover:      #333333;
+  --bg-input:      #2f2f2f;
+  --text-primary:  #ececec;
+  --text-secondary:#9b9b9b;
+  --text-tertiary: #6b6b6b;
+  --border:        rgba(255,255,255,0.08);
+  --border-strong: rgba(255,255,255,0.13);
+  --accent:        #2563eb;
+  --accent-hover:  #3b72f2;
+  --accent-glow:   rgba(37,99,235,0.15);
+  --accent2:       #7c5cbf;
+  --green:         #4caf7d;
+  --radius-sm:     6px;
+  --radius-md:     10px;
+  --radius-lg:     16px;
+}
+
+/* ─── RESET ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { overflow-x: hidden; background: var(--bg-base); }
+body {
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  line-height: 1.75;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── TYPOGRAPHY ─── */
+h1 { font-size: clamp(1.75rem, 4vw, 2.8rem); font-weight: 800; line-height: 1.15; letter-spacing: -0.035em; color: var(--text-primary); }
+h2 { font-size: clamp(1.3rem, 2.5vw, 1.9rem); font-weight: 700; line-height: 1.25; letter-spacing: -0.025em; color: var(--text-primary); }
+h3 { font-size: clamp(0.95rem, 1.6vw, 1.1rem); font-weight: 600; color: var(--text-primary); }
+p  { font-size: clamp(0.88rem, 1.3vw, 0.97rem); color: var(--text-secondary); line-height: 1.8; }
+a  { color: var(--accent); text-decoration: none; }
+
+/* ─── BUTTONS ─── */
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent); color: #fff;
+  font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.9rem;
+  padding: 11px 22px; border-radius: var(--radius-sm);
+  text-decoration: none; transition: background 0.18s, transform 0.18s, box-shadow 0.18s;
+  white-space: nowrap; border: 1px solid rgba(255,255,255,0.08);
+}
+.btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 4px 18px var(--accent-glow); }
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent; color: var(--text-secondary);
+  font-family: 'Inter', sans-serif; font-weight: 500; font-size: 0.9rem;
+  padding: 11px 22px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  text-decoration: none; transition: all 0.18s; white-space: nowrap;
+}
+.btn-ghost:hover { color: var(--text-primary); border-color: rgba(255,255,255,0.22); background: var(--bg-elevated); }
+
+/* ─── EMAIL STRIP ─── */
+.email-strip {
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 24px;
+  display: flex; align-items: center; justify-content: center; gap: 14px; flex-wrap: wrap;
+}
+.email-strip p { font-size: 0.82rem; color: var(--text-secondary); margin: 0; }
+.email-strip p strong { color: var(--text-primary); }
+.strip-btn {
+  background: var(--accent); color: #fff;
+  font-size: 0.78rem; font-weight: 600; font-family: 'Inter', sans-serif;
+  padding: 6px 16px; border-radius: 20px; text-decoration: none;
+  transition: background 0.18s; white-space: nowrap; display: inline-block;
+}
+.strip-btn:hover { background: var(--accent-hover); }
+
+/* ─── HERO ─── */
+.hero {
+  padding: clamp(52px, 7vw, 88px) clamp(20px, 5vw, 64px);
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: clamp(32px, 5vw, 60px); align-items: center;
+  background: linear-gradient(135deg, #1a1a1a 0%, #212121 50%, #1a1a1a 100%);
+  border-bottom: 1px solid rgba(37,99,235,0.25);
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 70% 50%, rgba(37,99,235,0.12) 0%, transparent 60%);
+  pointer-events: none;
+}
+@media (max-width: 720px) { .hero { grid-template-columns: 1fr; } .hero-visual { display: none; } }
+.section-label {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: var(--accent-glow); border: 1px solid rgba(37,99,235,0.25);
+  color: var(--accent); font-size: 0.72rem; font-weight: 600;
+  padding: 5px 12px; border-radius: 20px; margin-bottom: 18px; letter-spacing: 0.3px;
+}
+.section-label .dot { width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse-dot 2s infinite; }
+@keyframes pulse-dot { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.7)} }
+
+.hero-text h1 { margin-bottom: 14px; }
+.hero-text h1 em { font-style: normal; color: var(--accent); }
+.hero-sub {
+  color: var(--text-secondary); font-size: clamp(0.93rem, 1.5vw, 1.08rem);
+  margin-bottom: 14px; line-height: 1.7;
+}
+.hero-body {
+  font-size: clamp(0.85rem, 1.3vw, 0.94rem);
+  color: var(--text-tertiary); margin-bottom: 28px; line-height: 1.85;
+}
+.hero-body em { color: var(--accent); font-style: italic; }
+.hero-ctas { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* ─── TERMINAL MOCK ─── */
+.terminal {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: 0 20px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04);
+}
+.term-bar {
+  background: var(--bg-elevated);
+  padding: 10px 14px;
+  display: flex; align-items: center; gap: 7px;
+  border-bottom: 1px solid var(--border);
+}
+.td { width: 11px; height: 11px; border-radius: 50%; }
+.td.r { background: #ff5f57; } .td.y { background: #febc2e; } .td.g { background: #28c840; }
+.term-title { font-size: 0.72rem; color: var(--text-tertiary); font-family: ui-monospace, monospace; margin-left: 8px; }
+.term-body { padding: 18px 20px; }
+.term-label { font-size: 0.65rem; color: var(--accent); font-family: ui-monospace, monospace; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.term-cmd {
+  background: var(--bg-input); border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm); padding: 10px 14px;
+  font-family: ui-monospace, 'Cascadia Code', monospace; font-size: 0.8rem;
+  color: var(--text-primary); margin-bottom: 12px;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+}
+.term-run {
+  background: var(--accent); color: #fff;
+  font-family: ui-monospace, monospace; font-size: 0.7rem; font-weight: 700;
+  padding: 5px 12px; border-radius: 4px; cursor: pointer; flex-shrink: 0;
+}
+.term-log { display: flex; flex-direction: column; gap: 4px; }
+.log-line { font-family: ui-monospace, 'Cascadia Code', monospace; font-size: 0.72rem; display: flex; gap: 8px; }
+.ok  { color: var(--green); }
+.dim { color: var(--text-tertiary); }
+.hi  { color: var(--accent); }
+
+/* ─── HIGHLIGHTS ─── */
+.highlights {
+  padding: clamp(44px, 6vw, 72px) clamp(20px, 5vw, 64px);
+  background: var(--bg-surface); border-bottom: 1px solid var(--border);
+}
+.cards3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(12px,2vw,18px); max-width: 960px; margin: 0 auto; }
+@media (max-width: 680px) { .cards3 { grid-template-columns: 1fr; } }
+.card {
+  background: var(--bg-elevated); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: clamp(18px, 2.5vw, 26px);
+  transition: border-color 0.2s, transform 0.2s;
+}
+.card:hover { border-color: var(--border-strong); transform: translateY(-2px); }
+.card-icon {
+  width: 42px; height: 42px; background: var(--bg-hover);
+  border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  font-size: 1.25rem; margin-bottom: 12px;
+}
+.card h3 { margin-bottom: 6px; }
+.card p { font-size: 0.87rem; }
+
+/* ─── WHAT IS IT ─── */
+.what-is {
+  padding: clamp(44px, 6vw, 72px) clamp(20px, 5vw, 64px);
+  background: var(--bg-base); border-bottom: 1px solid var(--border);
+}
+.sec-inner { max-width: 720px; margin: 0 auto; }
+.sec-tag { font-size: 0.72rem; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; display: block; }
+.what-is h2 { margin-bottom: 20px; }
+.what-is p { margin-bottom: 14px; }
+
+/* ─── USE CASES ─── */
+.use-cases {
+  padding: clamp(44px, 6vw, 72px) clamp(20px, 5vw, 64px);
+  background: var(--bg-surface); border-bottom: 1px solid var(--border);
+}
+.uc-inner { max-width: 900px; margin: 0 auto; }
+.uc-header { margin-bottom: 28px; }
+.uc-header h2 { margin-bottom: 6px; }
+.ex-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 24px; }
+@media (max-width: 560px) { .ex-grid { grid-template-columns: 1fr; } }
+.ex-card {
+  background: var(--bg-elevated); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 13px 16px;
+  display: flex; gap: 10px; align-items: flex-start;
+  transition: border-color 0.18s;
+}
+.ex-card:hover { border-color: var(--border-strong); }
+.ex-check { color: var(--green); font-size: 0.85rem; flex-shrink: 0; margin-top: 2px; }
+.ex-card p { font-family: ui-monospace, monospace; font-size: 0.8rem; color: var(--text-secondary); margin: 0; line-height: 1.5; }
+.int-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--accent); font-size: 0.9rem; font-weight: 500;
+  text-decoration: none; border-bottom: 1px solid rgba(37,99,235,0.3);
+  padding-bottom: 1px; transition: border-color 0.18s;
+}
+.int-link:hover { border-color: var(--accent); }
+
+/* ─── CTA BANNER ─── */
+.cta-banner {
+  padding: clamp(52px, 7vw, 84px) clamp(20px, 5vw, 64px);
+  background: var(--bg-base);
+  text-align: center; position: relative; overflow: hidden;
+}
+.cta-banner::before {
+  content: '';  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 100%, rgba(37,99,235,0.07), transparent 55%);
+  pointer-events: none;
+}
+.cta-banner h2 { margin-bottom: 12px; position: relative; }
+.cta-banner p { margin-bottom: 28px; max-width: 480px; margin-left: auto; margin-right: auto; position: relative; }
+.cta-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; position: relative; }
+
+/* SEO HIGHLIGHT */
+.kw { background: rgba(255,220,0,0.25); color: #ffe066; border-bottom: 1px solid rgba(255,220,0,0.5); border-radius: 2px; padding: 0 2px; font-weight: 600; }
+.seo-banner { background: #1a0a0a; border: 1px solid rgba(255,80,80,0.35); border-radius: 8px; padding: 10px 16px; margin: 0; font-size: 0.78rem; color: #ff9999; text-align: center; font-family: ui-monospace, monospace; letter-spacing: 0.3px; }
+
+</style>
+</head>
+<body>
+<div class="seo-banner">✦ BEFORE Optimisation - limited keywords, generic headings, weak meta tags ✦</div>
+
+<!-- EMAIL STRIP -->
+<div class="email-strip">
+  <p>🎉 <strong>Get Early Access</strong> - Join our free beta list and be first to hear about new features.</p>
+  <a class="strip-btn" href="YOUR_GOOGLE_FORM_URL" target="_blank">Join Free →</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-text">
+    <div class="section-label"><span class="dot"></span> Free · No Coding Required · Windows Only</div>
+    <h1>Welcome to AutomateMyPC.AI</h1>
+    <p class="hero-sub">AutomateMyPC.AI takes your plain-English instructions and automates your Windows PC instantly - no coding, no technical skills, no frustration.</p>
+    <p class="hero-body">Imagine telling your computer exactly what to do - and it just does it. Whether you're a student, a professional, or just someone who wants their PC to work smarter - this free tool was built for you.<br><br>It's as easy as typing: <em>"Create a presentation for my coursework"</em> - and watching it happen.</p>
+    <div class="hero-ctas">
+      <a class="btn-primary" href="https://sites.google.com/iit.ac.lk/automate-my-pc/download" target="_blank">⬇ Download Free for Windows</a>
+      <a class="btn-ghost" href="https://sites.google.com/iit.ac.lk/automate-my-pc/how-it-works" target="_blank">See How It Works →</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="terminal">
+      <div class="term-bar">
+        <span class="td r"></span><span class="td y"></span><span class="td g"></span>
+        <span class="term-title">AutomateMyPC.AI - v1.0.0</span>
+      </div>
+      <div class="term-body">
+        <div class="term-label">Your instruction</div>
+        <div class="term-cmd">
+          <span>Create a 5-slide presentation for my coursework</span>
+          <span class="term-run">▶ Run</span>
+        </div>
+        <div class="term-log">
+          <div class="log-line"><span class="ok">✓</span><span class="dim">Parsing instruction...</span></div>
+          <div class="log-line"><span class="ok">✓</span><span class="dim">Launching PowerPoint...</span></div>
+          <div class="log-line"><span class="ok">✓</span><span class="dim">Generating 5 slides...</span></div>
+          <div class="log-line"><span class="ok">✓</span><span class="dim">Applying layout & design...</span></div>
+          <div class="log-line"><span class="ok">✓</span><span class="hi">Task complete - file saved!</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUE HIGHLIGHTS -->
+<section class="highlights">
+  <div class="cards3">
+    <div class="card">
+      <div class="card-icon">💬</div>
+      <h3>Plain-English Commands</h3>
+      <p>No code, no scripts, no manuals. Just type what you want your PC to do in your own words - and it gets done.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">⚡</div>
+      <h3>Instant Execution on Windows</h3>
+      <p>Built natively for Windows 10 and 11. No browser extensions required. Install once, automate forever.</p>
+    </div>
+    <div class="card">
+      <div class="card-icon">🕐</div>
+      <h3>Saves Hours Every Week</h3>
+      <p>From file management to report generation, AutomateMyPC.AI handles the repetitive stuff so you can focus on what matters.</p>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT IS IT -->
+<section class="what-is">
+  <div class="sec-inner">
+    <span class="sec-tag">More Info</span>
+    <h2>About Our Software</h2>
+    <p>AutomateMyPC.AI is a software application that can help you do things on your computer more quickly.</p>
+    <p>Unlike other tools, our software is easy to use. You just type what you need and the application does the work.</p>
+    <p>Whether you need to organise your Downloads folder, batch-rename files, create a presentation, or schedule a daily task - AutomateMyPC.AI makes it possible in seconds. And because it's completely free, there's no reason not to try it today.</p>
+  </div>
+</section>
+
+<!-- USE CASES TEASER -->
+<section class="use-cases">
+  <div class="uc-inner">
+    <div class="uc-header">
+      <span class="sec-tag">Real Examples</span>
+      <h2>Things You Can Do</h2>
+      <p>Here are just a few of the things people are already doing with AutomateMyPC.AI every day:</p>
+    </div>
+    <div class="ex-grid">
+      <div class="ex-card"><span class="ex-check">✓</span><p>"Organise all files in my Downloads folder by type"</p></div>
+      <div class="ex-card"><span class="ex-check">✓</span><p>"Create a 5-slide PowerPoint about climate change"</p></div>
+      <div class="ex-card"><span class="ex-check">✓</span><p>"Rename every photo in this folder with today's date"</p></div>
+      <div class="ex-card"><span class="ex-check">✓</span><p>"Move documents older than 30 days into an Archive folder"</p></div>
+      <div class="ex-card"><span class="ex-check">✓</span><p>"Open my three most-used apps every morning automatically"</p></div>
+      <div class="ex-card"><span class="ex-check">✓</span><p>"Delete all files in my Recycle Bin and empty it"</p></div>
+    </div>
+    <a class="int-link" href="https://sites.google.com/iit.ac.lk/automate-my-pc/how-it-works" target="_blank">See full use cases and step-by-step guide →</a>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section class="cta-banner">
+  <h2>Get Started Today</h2>
+  <p>Download the application and start using it right away.</p>
+  <div class="cta-row">
+    <a class="btn-primary" href="https://sites.google.com/iit.ac.lk/automate-my-pc/download" target="_blank">⬇ Download AutomateMyPC.AI Free</a>
+    <a class="btn-ghost" href="https://sites.google.com/iit.ac.lk/automate-my-pc/features" target="_blank">See All Features →</a>
+  </div>
+</section>
+
+<script>
+function sendHeight(){window.parent.postMessage({type:'resize',height:document.documentElement.scrollHeight},'*');}
+new ResizeObserver(sendHeight).observe(document.body);
+sendHeight();
+</script>
+</body>
+</html>
