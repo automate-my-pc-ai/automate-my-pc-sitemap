@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pico 2W · Login</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #0d1117;
+  --surface:   #161b22;
+  --surface2:  #1c2128;
+  --border:    #30363d;
+  --border2:   #21262d;
+  --green:     #3fb950;
+  --green-dim: #132d1a;
+  --teal:      #39d0b8;
+  --red:       #f85149;
+  --text:      #e6edf3;
+  --muted:     #8b949e;
+  --faint:     #484f58;
+  --mono:      'IBM Plex Mono', monospace;
+  --sans:      'Inter', system-ui, sans-serif;
+}
+
+html, body { height: 100%; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(circle, #2a3240 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: .45;
+  pointer-events: none;
+  z-index: 0;
+}
+body::after {
+  content: '';
+  position: fixed;
+  width: 480px; height: 480px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(63,185,80,.07) 0%, transparent 70%);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Card ─────────────────────────────────────────────────────────────── */
+.card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 400px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 36px 32px 28px;
+  box-shadow: 0 24px 80px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.04) inset;
+  animation: up .4s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes up {
+  from { opacity:0; transform:translateY(20px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ── Chip ─────────────────────────────────────────────────────────────── */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--green-dim);
+  color: var(--green);
+  font-family: var(--mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .05em;
+  padding: 4px 11px 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(63,185,80,.22);
+  margin-bottom: 20px;
+}
+.chip-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+  animation: blink 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes blink { 0%,100% { opacity:1; } 50% { opacity:.2; } }
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -.4px;
+  color: #f0f6fc;
+  margin-bottom: 6px;
+}
+.sub {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.55;
+  margin-bottom: 28px;
+}
+
+/* ── OTP ──────────────────────────────────────────────────────────────── */
+.otp-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.otp-wrap {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.otp-wrap input {
+  flex: 1;
+  min-width: 0;
+  height: 56px;
+  text-align: center;
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s, background .15s, color .15s;
+  caret-color: transparent;
+  /* prevent iOS zoom on focus */
+  font-size: max(22px, 16px);
+}
+.otp-wrap input:focus {
+  border-color: var(--green);
+  background: #0c1f10;
+  box-shadow: 0 0 0 3px rgba(63,185,80,.16);
+}
+.otp-wrap input.filled {
+  color: var(--teal);
+  border-color: rgba(57,208,184,.45);
+}
+.otp-wrap input.err {
+  border-color: var(--red) !important;
+  box-shadow: 0 0 0 3px rgba(248,81,73,.15) !important;
+  animation: shake .35s ease;
+}
+@keyframes shake {
+  0%,100% { transform:translateX(0); }
+  20% { transform:translateX(-5px); }
+  40% { transform:translateX(5px); }
+  60% { transform:translateX(-4px); }
+  80% { transform:translateX(4px); }
+}
+
+/* ── Feedback ─────────────────────────────────────────────────────────── */
+.fb-wrap {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.fb-msg {
+  width: 100%;
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 7px 12px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  line-height: 1.4;
+  display: none;
+}
+.fb-msg.show { display: block; }
+.fb-msg.info { color: var(--muted); background: var(--surface2); border-color: var(--border2); }
+.fb-msg.ok   { color: var(--green); background: #0b2314;         border-color: rgba(63,185,80,.3); }
+.fb-msg.bad  { color: var(--red);   background: #250e0d;         border-color: rgba(248,81,73,.3); }
+
+.prog-wrap {
+  height: 2px;
+  background: var(--border2);
+  border-radius: 1px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.prog-fill {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, var(--teal), var(--green));
+  transition: width .25s ease;
+}
+
+/* ── Server row ───────────────────────────────────────────────────────── */
+.srv-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border2);
+}
+.srv-label { font-size: 11px; color: var(--faint); flex-shrink: 0; }
+.srv-url {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.srv-url.empty { color: var(--faint); font-style: italic; }
+.btn-cfg {
+  flex-shrink: 0;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 5px 13px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+  white-space: nowrap;
+}
+.btn-cfg:hover { border-color: var(--green); color: var(--green); }
+
+/* ── CORS warning ─────────────────────────────────────────────────────── */
+.cors-warn {
+  display: none;
+  margin-top: 14px;
+  padding: 10px 13px;
+  background: #1e1a0d;
+  border: 1px solid rgba(240,136,62,.3);
+  border-radius: 7px;
+  font-size: 11.5px;
+  color: #c9a843;
+  line-height: 1.55;
+}
+.cors-warn.show { display: block; }
+.cors-warn code {
+  font-family: var(--mono);
+  background: rgba(255,255,255,.07);
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 11px;
+}
+</style>
+</head>
+<body>
+<div class="card">
+
+  <div class="chip"><span class="chip-dot"></span>Raspberry Pi Pico 2W</div>
+
+  <h1>Sensor Login</h1>
+  <p class="sub">Enter the 6-digit TOTP passcode to access the dashboard.</p>
+
+  <div class="otp-label">One-Time Passcode</div>
+
+  <div class="otp-wrap" id="otp-wrap">
+    <input type="text" inputmode="numeric" maxlength="1" autocomplete="one-time-code" aria-label="Digit 1">
+    <input type="text" inputmode="numeric" maxlength="1" aria-label="Digit 2">
+    <input type="text" inputmode="numeric" maxlength="1" aria-label="Digit 3">
+    <input type="text" inputmode="numeric" maxlength="1" aria-label="Digit 4">
+    <input type="text" inputmode="numeric" maxlength="1" aria-label="Digit 5">
+    <input type="text" inputmode="numeric" maxlength="1" aria-label="Digit 6">
+  </div>
+
+  <div class="fb-wrap"><div class="fb-msg" id="fb-msg"></div></div>
+  <div class="prog-wrap"><div class="prog-fill" id="prog-fill"></div></div>
+
+  <div class="srv-row">
+    <span class="srv-label">Server</span>
+    <span class="srv-url empty" id="srv-url">not configured</span>
+    <button class="btn-cfg" id="btn-cfg">Configure</button>
+  </div>
+
+  <!--
+    IMPORTANT — server-side fix required for cookies to work:
+    Your server sets  Access-Control-Allow-Origin: *
+    Browsers BLOCK cookies (credentials) when ACAO is a wildcard.
+    In your cors_headers() you must return the actual requesting Origin, and add:
+      "Access-Control-Allow-Credentials": "true"
+    Example fix for cors_headers():
+      origin = request.headers.get("Origin", "*")
+      return {
+        "Access-Control-Allow-Origin": origin,
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+      }
+    Also add  "Vary": "Origin"  to all responses.
+    The warning below is shown automatically when a network/CORS error is detected.
+  -->
+  <div class="cors-warn" id="cors-warn">
+    ⚠ <strong>CORS / cookie error detected.</strong> Your server returns
+    <code>Access-Control-Allow-Origin: *</code> which blocks cookies.
+    Fix <code>cors_headers()</code> to echo the request Origin and add
+    <code>Access-Control-Allow-Credentials: true</code>.
+    See the HTML comment above for the exact fix.
+  </div>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /*
+   * localStorage is used instead of sessionStorage so the server URL
+   * persists when status.html is opened as a separate local file.
+   */
+  const SK = 'pico_server_url';
+  let srv = localStorage.getItem(SK) || '';
+
+  function refreshSrvDisplay() {
+    const el = document.getElementById('srv-url');
+    if (srv) { el.textContent = srv; el.classList.remove('empty'); }
+    else     { el.textContent = 'not configured'; el.classList.add('empty'); }
+  }
+
+  function askServer() {
+    const v = prompt(
+      'Enter Pico server base URL\n(e.g. http://192.168.1.100:5000)',
+      srv || 'http://'
+    );
+    if (v && v.trim()) {
+      srv = v.trim().replace(/\/+$/, '');   // strip trailing slashes
+      localStorage.setItem(SK, srv);
+      refreshSrvDisplay();
+    }
+  }
+
+  if (!srv) askServer();
+  refreshSrvDisplay();
+  document.getElementById('btn-cfg').addEventListener('click', askServer);
+
+  /* ── OTP boxes ──────────────────────────────────────────────────────── */
+  const boxes  = Array.from(document.querySelectorAll('#otp-wrap input'));
+  const msgEl  = document.getElementById('fb-msg');
+  const progEl = document.getElementById('prog-fill');
+  const warnEl = document.getElementById('cors-warn');
+  let busy = false;
+
+  function setMsg(txt, cls) {
+    msgEl.textContent = txt;
+    msgEl.className   = txt ? ('fb-msg show ' + cls) : 'fb-msg';
+  }
+  function setProg(pct) { progEl.style.width = pct + '%'; }
+
+  function clearBoxes() {
+    boxes.forEach(b => { b.value = ''; b.classList.remove('filled', 'err'); });
+    busy = false;
+    boxes[0].focus();
+  }
+
+  function shakeErr() {
+    boxes.forEach(b => {
+      b.classList.remove('err');
+      void b.offsetWidth;         // force reflow so animation re-fires
+      b.classList.add('err');
+    });
+  }
+
+  boxes.forEach((box, i) => {
+    box.addEventListener('focus', () => { box.select(); });
+
+    box.addEventListener('keydown', e => {
+      if (e.key === 'Backspace') {
+        e.preventDefault();
+        if (box.value) {
+          box.value = '';
+          box.classList.remove('filled');
+        } else if (i > 0) {
+          boxes[i - 1].value = '';
+          boxes[i - 1].classList.remove('filled');
+          boxes[i - 1].focus();
+        }
+        return;
+      }
+      if (e.key === 'ArrowLeft'  && i > 0) { e.preventDefault(); boxes[i - 1].focus(); }
+      if (e.key === 'ArrowRight' && i < 5) { e.preventDefault(); boxes[i + 1].focus(); }
+    });
+
+    box.addEventListener('input', () => {
+      /* Keep only the last digit typed; strip anything non-numeric */
+      const digit = box.value.replace(/\D/g, '').slice(-1);
+      box.value = digit;
+      if (digit) {
+        box.classList.add('filled');
+        if (i < 5) {
+          boxes[i + 1].focus();
+        } else {
+          box.blur();
+          tryLogin();
+        }
+      } else {
+        box.classList.remove('filled');
+      }
+    });
+
+    box.addEventListener('paste', e => {
+      e.preventDefault();
+      const pasted = (e.clipboardData || window.clipboardData)
+        .getData('text').replace(/\D/g, '').slice(0, 6);
+      pasted.split('').forEach((ch, j) => {
+        if (boxes[j]) { boxes[j].value = ch; boxes[j].classList.add('filled'); }
+      });
+      if (pasted.length === 6) {
+        boxes[5].blur();
+        tryLogin();
+      } else if (boxes[pasted.length]) {
+        boxes[pasted.length].focus();
+      }
+    });
+  });
+
+  /* ── Login request ──────────────────────────────────────────────────── */
+  async function tryLogin() {
+    if (busy) return;
+    const otp = boxes.map(b => b.value).join('');
+    if (otp.length < 6) return;
+
+    if (!srv) {
+      setMsg('⚠ Server not configured — click Configure', 'bad');
+      shakeErr();
+      return;
+    }
+
+    busy = true;
+    warnEl.classList.remove('show');
+    setMsg('Verifying passcode…', 'info');
+    setProg(40);
+
+    try {
+      const res = await fetch(srv + '/login', {
+        method:      'POST',
+        /*
+         * Content-Type must be application/x-www-form-urlencoded so
+         * Microdot's request.form dict is populated correctly.
+         */
+        headers:     { 'Content-Type': 'application/x-www-form-urlencoded' },
+        /*
+         * 'include' is required so the browser sends/receives the
+         * Set-Cookie header from the Pico server.
+         * NOTE: this only works if the server returns a specific Origin
+         * (not *) in Access-Control-Allow-Origin and also sets
+         * Access-Control-Allow-Credentials: true.
+         */
+        body:        'totp=' + encodeURIComponent(otp),
+        credentials: 'include',
+      });
+
+      setProg(85);
+      /* Parse JSON; if body is empty/invalid fall back to {} */
+      const data = await res.json().catch(() => ({}));
+
+      if (res.ok && data.status === 'ok') {
+        setProg(100);
+        setMsg('✓ Authenticated — redirecting…', 'ok');
+        /* Small delay so the user can see the success state */
+        setTimeout(() => { window.location.href = 'status.html'; }, 800);
+
+      } else {
+        setProg(0);
+        setMsg('✗ ' + (data.error || 'Authentication failed'), 'bad');
+        shakeErr();
+        setTimeout(() => { setMsg('', ''); clearBoxes(); }, 1800);
+      }
+
+    } catch (err) {
+      setProg(0);
+      /*
+       * A TypeError with "Failed to fetch" almost always means a CORS
+       * error or the server is unreachable. Show the CORS hint.
+       */
+      const isCors = err instanceof TypeError;
+      if (isCors) {
+        setMsg('✗ Network / CORS error — see warning below', 'bad');
+        warnEl.classList.add('show');
+      } else {
+        setMsg('✗ Cannot reach server — check URL', 'bad');
+      }
+      shakeErr();
+      busy = false;
+    }
+  }
+
+  boxes[0].focus();
+})();
+</script>
+</body>
+</html>
