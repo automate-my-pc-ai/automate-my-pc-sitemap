@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pico 2W · Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #0d1117;
+  --surface:  #161b22;
+  --s2:       #1c2128;
+  --s3:       #22272e;
+  --border:   #30363d;
+  --b2:       #21262d;
+  --green:    #3fb950;
+  --teal:     #39d0b8;
+  --amber:    #f0883e;
+  --blue:     #58a6ff;
+  --red:      #f85149;
+  --text:     #e6edf3;
+  --muted:    #8b949e;
+  --faint:    #484f58;
+  --mono:     'IBM Plex Mono', monospace;
+  --sans:     'Inter', system-ui, sans-serif;
+}
+
+html { height: 100%; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Top nav ──────────────────────────────────────────────────────────── */
+.nav {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 24px;
+  height: 56px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  z-index: 10;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: 4px;
+}
+.nav-icon {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, #1a3c22, #0d1117);
+  border: 1px solid rgba(63,185,80,.3);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+.nav-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+}
+.nav-sub {
+  font-size: 11px;
+  font-family: var(--mono);
+  color: var(--faint);
+  white-space: nowrap;
+}
+
+.nav-sep { flex: 1; }
+
+/* live badge */
+.live-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-family: var(--mono);
+  color: var(--green);
+  background: rgba(63,185,80,.08);
+  border: 1px solid rgba(63,185,80,.2);
+  border-radius: 999px;
+  padding: 3px 10px 3px 7px;
+  white-space: nowrap;
+}
+.live-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 5px var(--green);
+  animation: pulse 1.8s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes pulse {
+  0%,100% { opacity:1; }
+  50%     { opacity:.25; }
+}
+
+.nav-timer {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  display: flex; align-items: center; gap: 5px;
+}
+.nav-timer strong { color: var(--teal); }
+
+.btn-logout {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 6px;
+  transition: border-color .15s, color .15s, background .15s;
+  white-space: nowrap;
+}
+.btn-logout:hover { border-color: var(--red); color: var(--red); background: rgba(248,81,73,.06); }
+
+/* ── Metric cards ─────────────────────────────────────────────────────── */
+.metrics {
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom: 1px solid var(--border);
+}
+
+.metric {
+  padding: 20px 24px 18px;
+  border-right: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.metric:last-child { border-right: none; }
+.metric::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+}
+.metric.temp::after  { background: var(--amber); }
+.metric.press::after { background: var(--green); }
+.metric.hum::after   { background: var(--blue); }
+
+.m-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+  display: flex; align-items: center; gap: 6px;
+}
+.m-icon { font-size: 13px; }
+
+.m-value {
+  font-family: var(--mono);
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -.5px;
+  transition: color .3s;
+  margin-bottom: 4px;
+}
+.metric.temp  .m-value { color: var(--amber); }
+.metric.press .m-value { color: var(--green); }
+.metric.hum   .m-value { color: var(--blue); }
+
+.m-unit {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--faint);
+}
+
+/* ── Table area ───────────────────────────────────────────────────────── */
+.table-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.table-head {
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: 56px 1fr 1fr 1fr 72px;
+  padding: 0 24px;
+  height: 36px;
+  align-items: center;
+  background: var(--s2);
+  border-bottom: 1px solid var(--border);
+}
+.th {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.th:not(:first-child) { text-align: right; }
+
+.table-body {
+  flex: 1;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+}
+/* scrollbar */
+.table-body::-webkit-scrollbar { width: 5px; }
+.table-body::-webkit-scrollbar-track { background: var(--bg); }
+.table-body::-webkit-scrollbar-thumb { background: var(--b2); border-radius: 3px; }
+.table-body::-webkit-scrollbar-thumb:hover { background: var(--border); }
+
+/* rows */
+.data-row {
+  display: grid;
+  grid-template-columns: 56px 1fr 1fr 1fr 72px;
+  padding: 0 24px;
+  height: 44px;
+  align-items: center;
+  border-bottom: 1px solid var(--b2);
+  transition: background .12s;
+  animation: rowSlide .3s cubic-bezier(.22,1,.36,1) both;
+}
+.data-row:hover { background: rgba(255,255,255,.025); }
+@keyframes rowSlide {
+  from { opacity:0; transform:translateY(-8px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.data-row.flash { animation: flash .5s ease; }
+@keyframes flash {
+  0%   { background: rgba(63,185,80,.1); }
+  100% { background: transparent; }
+}
+
+.cell-idx {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--faint);
+}
+.cell-val {
+  text-align: right;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+}
+.cell-val.temp-c  { color: var(--amber); }
+.cell-val.press-c { color: var(--green); }
+.cell-val.hum-c   { color: var(--blue); }
+.cell-unit {
+  font-size: 10px;
+  color: var(--faint);
+  margin-left: 3px;
+}
+.cell-time {
+  text-align: right;
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--faint);
+}
+
+/* empty state */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 60px 20px;
+  color: var(--faint);
+}
+.empty-icon { font-size: 36px; opacity: .5; }
+.empty-text { font-size: 13px; color: var(--muted); }
+.empty-sub  { font-size: 11px; font-family: var(--mono); }
+
+/* ── Footer ───────────────────────────────────────────────────────────── */
+.foot {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 24px;
+  height: 38px;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  font-size: 11px;
+  color: var(--faint);
+}
+.foot strong { color: var(--muted); }
+.foot-sep { flex: 1; }
+.foot-srv {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--faint);
+  min-width: 0;
+}
+.foot-srv span {
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 260px;
+}
+.btn-tiny {
+  background: var(--s2);
+  border: 1px solid var(--border);
+  color: var(--faint);
+  font-family: var(--sans);
+  font-size: 10px;
+  padding: 3px 9px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.btn-tiny:hover { border-color: var(--teal); color: var(--teal); }
+
+/* ── Toast ────────────────────────────────────────────────────────────── */
+.toast {
+  position: fixed;
+  bottom: 52px; right: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--red);
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text);
+  padding: 10px 16px;
+  border-radius: 6px;
+  z-index: 99;
+  max-width: 320px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .2s, transform .2s;
+  pointer-events: none;
+}
+.toast.show    { opacity: 1; transform: translateY(0); }
+.toast.ok      { border-left-color: var(--green); }
+
+/* ── Responsive ───────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .metrics { grid-template-columns: 1fr; }
+  .metric  { border-right: none; border-bottom: 1px solid var(--border); }
+  .metric:last-child { border-bottom: none; }
+  .m-value { font-size: 26px; }
+  .nav { padding: 0 14px; gap: 8px; }
+  .nav-sub, .nav-timer { display: none; }
+  .table-head, .data-row { grid-template-columns: 48px 1fr 1fr 1fr; padding: 0 14px; }
+  .th:last-child, .cell-time { display: none; }
+  .foot { padding: 0 14px; }
+  .foot-srv span { max-width: 140px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="nav">
+  <div class="nav-logo">
+    <div class="nav-icon">🌡</div>
+    <div>
+      <div class="nav-title">Pico Monitor</div>
+      <div class="nav-sub">Pico 2W · ENV Sensor</div>
+    </div>
+  </div>
+
+  <div class="nav-sep"></div>
+
+  <div class="live-badge"><span class="live-dot"></span>Live</div>
+
+  <div class="nav-timer">Next in <strong id="timer">5</strong>s</div>
+
+  <button class="btn-logout" id="btn-logout">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+    </svg>
+    Logout
+  </button>
+</nav>
+
+<!-- Metric cards -->
+<div class="metrics">
+  <div class="metric temp">
+    <div class="m-label"><span class="m-icon">🌡</span>Temperature</div>
+    <div class="m-value" id="m-temp">—</div>
+    <div class="m-unit">degrees Celsius (°C)</div>
+  </div>
+  <div class="metric press">
+    <div class="m-label"><span class="m-icon">🔵</span>Pressure</div>
+    <div class="m-value" id="m-press">—</div>
+    <div class="m-unit">hectopascals (hPa)</div>
+  </div>
+  <div class="metric hum">
+    <div class="m-label"><span class="m-icon">💧</span>Humidity</div>
+    <div class="m-value" id="m-hum">—</div>
+    <div class="m-unit">relative humidity (%)</div>
+  </div>
+</div>
+
+<!-- Table -->
+<div class="table-wrap">
+  <div class="table-head">
+    <span class="th">#</span>
+    <span class="th" style="text-align:right">Temp (°C)</span>
+    <span class="th" style="text-align:right">Pressure (hPa)</span>
+    <span class="th" style="text-align:right">Humidity (%)</span>
+    <span class="th" style="text-align:right">Time</span>
+  </div>
+  <div class="table-body" id="table-body">
+    <div class="empty" id="empty-state">
+      <div class="empty-icon">📡</div>
+      <div class="empty-text">Waiting for first reading…</div>
+      <div class="empty-sub">Polling every 5 seconds</div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="foot">
+  Readings: <strong id="count">0</strong>
+  <div class="foot-sep"></div>
+  <div class="foot-srv">
+    Server: <span id="foot-srv">—</span>
+    <button class="btn-tiny" id="btn-change-srv">Change</button>
+  </div>
+</footer>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ── Server URL ─────────────────────────────────────────────────────── */
+  const SK = 'pico_server_url';
+  let srv = sessionStorage.getItem(SK) || '';
+
+  function refreshSrv() {
+    const el = document.getElementById('foot-srv');
+    el.textContent = srv || '(not configured)';
+  }
+  function askServer() {
+    const v = prompt('Pico server URL (e.g. http://192.168.1.100:5000):', srv || 'http://');
+    if (v && v.trim()) {
+      srv = v.trim().replace(/\/$/, '');
+      sessionStorage.setItem(SK, srv);
+      refreshSrv();
+    }
+  }
+  if (!srv) askServer();
+  refreshSrv();
+  document.getElementById('btn-change-srv').addEventListener('click', askServer);
+
+  /* ── Toast ──────────────────────────────────────────────────────────── */
+  let toastTmr;
+  function toast(msg, ok) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className   = 'toast show' + (ok ? ' ok' : '');
+    clearTimeout(toastTmr);
+    toastTmr = setTimeout(() => { el.className = 'toast'; }, 3500);
+  }
+
+  /* ── State ──────────────────────────────────────────────────────────── */
+  let count    = 0;
+  let ticking  = false;
+  let countdown = 5;
+  let intervalH = null;
+
+  /* ── Fetch ──────────────────────────────────────────────────────────── */
+  async function fetchStatus() {
+    if (!srv) { toast('Server not configured'); return; }
+    try {
+      const res = await fetch(srv + '/status', { credentials: 'include', cache: 'no-store' });
+      if (res.status === 401) {
+        toast('Session expired — redirecting…');
+        setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+        return;
+      }
+      if (!res.ok) { toast('Server error ' + res.status); return; }
+      const d = await res.json();
+      addRow(d.temperature, d.pressure, d.humidity);
+    } catch { toast('Network error — retrying in 5s'); }
+  }
+
+  /* ── Add row to top ─────────────────────────────────────────────────── */
+  function fmt(n, dec) { return (typeof n === 'number' ? n.toFixed(dec) : '—'); }
+
+  function addRow(temp, press, hum) {
+    count++;
+    document.getElementById('count').textContent = count;
+
+    /* update metric cards */
+    document.getElementById('m-temp').textContent  = fmt(temp,  1);
+    document.getElementById('m-press').textContent = fmt(press, 1);
+    document.getElementById('m-hum').textContent   = fmt(hum,   1);
+
+    /* remove empty state */
+    const es = document.getElementById('empty-state');
+    if (es) es.remove();
+
+    /* build row */
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+
+    const row = document.createElement('div');
+    row.className = 'data-row flash';
+    row.innerHTML =
+      '<span class="cell-idx">' + String(count).padStart(3,'0') + '</span>' +
+      '<span class="cell-val temp-c">'  + fmt(temp,2)  + '<span class="cell-unit">°C</span></span>'  +
+      '<span class="cell-val press-c">' + fmt(press,2) + '<span class="cell-unit">hPa</span></span>' +
+      '<span class="cell-val hum-c">'   + fmt(hum,2)   + '<span class="cell-unit">%</span></span>'   +
+      '<span class="cell-time">' + timeStr + '</span>';
+
+    const body = document.getElementById('table-body');
+    body.insertBefore(row, body.firstChild);
+  }
+
+  /* ── Countdown & polling ────────────────────────────────────────────── */
+  function startCycle() {
+    countdown = 5;
+    document.getElementById('timer').textContent = countdown;
+    clearInterval(intervalH);
+    intervalH = setInterval(() => {
+      countdown--;
+      document.getElementById('timer').textContent = countdown;
+      if (countdown <= 0) {
+        clearInterval(intervalH);
+        fetchStatus().then(startCycle);
+      }
+    }, 1000);
+  }
+
+  /* ── Logout ─────────────────────────────────────────────────────────── */
+  document.getElementById('btn-logout').addEventListener('click', async () => {
+    clearInterval(intervalH);
+    try { await fetch(srv + '/logout', { credentials: 'include' }); } catch {}
+    window.location.href = 'index.html';
+  });
+
+  /* ── Boot ───────────────────────────────────────────────────────────── */
+  if (srv) {
+    fetchStatus().then(startCycle);
+  } else {
+    toast('Server URL not set — configure below');
+  }
+})();
+</script>
+</body>
+</html>
